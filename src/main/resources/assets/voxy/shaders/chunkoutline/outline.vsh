@@ -43,6 +43,17 @@ void main() {
         return;
     }
 
+    //Skip the box the camera is inside: its projection straddles the near plane, and the degenerate
+    //triangles fill the whole mask with far depths (the author's "straddling the camera covers the
+    //whole screen"). A saturated mask then discards the water beyond the render distance. The bounds
+    //are inclusive: the camera's block coordinate often lies exactly on a section's min corner.
+    if (origin.x > -16 && origin.x <= 0
+            && origin.y > -16 && origin.y <= 0
+            && origin.z > -16 && origin.z <= 0) {
+        gl_Position = vec4(-100.0f, -100.0f, -100.0f, 0.0f);
+        return;
+    }
+
     ivec3 cubeCornerI = ivec3(gl_VertexID&1, (gl_VertexID>>2)&1, (gl_VertexID>>1)&1)*16;
     //Expand the y height to be big (will be +- 8192)
     //TODO: make it W.R.T world height and offsets

@@ -67,6 +67,16 @@ void main() {
     #endif
     (getQuadCornerPos(quad, cornerId));
 
+    //One depth-buffer ulp of nearward bias. At the vanilla boundary the LOD and vanilla geometry are
+    //coplanar (the same block faces), and the depth test otherwise flips per pixel between the two,
+    //flickering through the boundary fade (and at the square water seam). The bias makes the LOD
+    //consistently win those coplanar tests without disturbing depths that genuinely differ.
+    #ifdef USE_REVERSE_Z
+    gl_Position.z += (2.0f / float((1<<24) - 1)) * gl_Position.w;
+    #else
+    gl_Position.z -= (2.0f / float((1<<24) - 1)) * gl_Position.w;
+    #endif
+
 
     #ifndef USE_NV_BARRY
     uv = getCornerUV(quad, cornerId);
