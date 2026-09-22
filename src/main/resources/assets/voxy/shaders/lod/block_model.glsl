@@ -70,5 +70,7 @@ bool modelIsCreateTrack(BlockModel model) {
 }
 
 float modelFluidHeight(BlockModel model) {
-    return float((model.flagsA >> 8u) & 31u) / 9.0;
+    //The height is 4 bits (1..9); the 5-bit mask also picked up the isFluid flag at bit 12, which
+    //fed the height out as h+16 and broke the fluid top indentation.
+    return float((model.flagsA >> 8u) & 15u) / 9.0;
 }
