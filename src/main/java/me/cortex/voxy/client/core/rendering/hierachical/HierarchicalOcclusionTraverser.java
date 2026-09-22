@@ -269,7 +269,11 @@ public class HierarchicalOcclusionTraverser {
         }
 
         //Clear the render output counter
-        nglClearNamedBufferSubData(viewport.getRenderList().id, GL_R32UI, 0, 4, GL_RED_INTEGER, GL_UNSIGNED_INT, 0);
+        if (me.cortex.voxy.client.core.gl.DsaClearPath.useFallback()) {
+            me.cortex.voxy.client.core.gl.DsaClearPath.clearBufferSubData(viewport.getRenderList().id, GL_R32UI, 0, 4, GL_RED_INTEGER, GL_UNSIGNED_INT);
+        } else {
+            nglClearNamedBufferSubData(viewport.getRenderList().id, GL_R32UI, 0, 4, GL_RED_INTEGER, GL_UNSIGNED_INT, 0);
+        }
 
         //Traverse
         this.traverseInternal();

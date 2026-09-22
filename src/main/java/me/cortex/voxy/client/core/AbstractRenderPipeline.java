@@ -190,7 +190,13 @@ public abstract class AbstractRenderPipeline extends TrackedObject {
     }
 
     protected void initDepthStencil(Viewport<?> viewport, int sourceFrameBuffer, int targetFb, int srcWidth, int srcHeight, int width, int height) {
-        glClearNamedFramebufferfi(targetFb, GL_DEPTH_STENCIL, 0, this.properties.clearDepth(), 1);
+        //The named clear is a no-op on Intel's Windows driver (see DsaClearPath), and this one also has
+        //to land the stencil this pipeline selects LOD pixels with, so it takes the same fallback.
+        if (me.cortex.voxy.client.core.gl.DsaClearPath.useFallback()) {
+            me.cortex.voxy.client.core.gl.DsaClearPath.clearDepthStencil(targetFb, this.properties.clearDepth(), 1);
+        } else {
+            glClearNamedFramebufferfi(targetFb, GL_DEPTH_STENCIL, 0, this.properties.clearDepth(), 1);
+        }
         glBindFramebuffer(GL30.GL_FRAMEBUFFER, targetFb);
 
         //If pixel passes, update stencil to 0 and set depth to the reprojected source depth

@@ -59,12 +59,23 @@ public class GlBuffer extends TrackedObject {
     }
 
     public GlBuffer zero() {
-        nglClearNamedBufferData(this.id, GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE, 0);
+        //Intel's Windows driver can drop the named clear without an error - see DsaClearPath.
+        if (DsaClearPath.useFallback()) {
+            DsaClearPath.clearBufferData(this.id, GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE, 0);
+        } else {
+            nglClearNamedBufferData(this.id, GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE, 0);
+        }
         return this;
     }
 
     public GlBuffer zeroRange(long offset, long size) {
-        nglClearNamedBufferSubData(this.id, GL_R8UI, offset, size, GL_RED_INTEGER, GL_UNSIGNED_BYTE, 0);
+        //The translucent draw sort resets its 1024 distance buckets with exactly this call every frame;
+        //a dropped clear lets them accumulate and the sorted commands land outside their region.
+        if (DsaClearPath.useFallback()) {
+            DsaClearPath.clearBufferSubData(this.id, GL_R8UI, offset, size, GL_RED_INTEGER, GL_UNSIGNED_BYTE);
+        } else {
+            nglClearNamedBufferSubData(this.id, GL_R8UI, offset, size, GL_RED_INTEGER, GL_UNSIGNED_BYTE, 0);
+        }
         return this;
     }
 
@@ -75,7 +86,11 @@ public class GlBuffer extends TrackedObject {
         glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, 0);
 
         MemoryUtil.memPutInt(SCRATCH, data);
-        nglClearNamedBufferData(this.id, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT, SCRATCH);
+        if (DsaClearPath.useFallback()) {
+            DsaClearPath.clearBufferData(this.id, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT, SCRATCH);
+        } else {
+            nglClearNamedBufferData(this.id, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT, SCRATCH);
+        }
         return this;
     }
 

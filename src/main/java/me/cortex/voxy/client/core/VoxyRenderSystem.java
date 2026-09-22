@@ -115,6 +115,9 @@ public class VoxyRenderSystem {
         // 先持有世界引用，再创建其他渲染资源，防止初始化超时期间世界被回收。
         world.acquireRef();
         Logger.info("Creating Voxy render system");
+        //Resolve the depth clear path (and run its one-off driver check) here, on the render thread
+        //during renderer construction, so it never lands in the middle of a frame.
+        me.cortex.voxy.client.core.gl.DsaClearPath.init();
 
         if (Minecraft.getInstance().options.renderDistance().get() < 3) {
             String msg = "Voxy: Having a vanilla render distance of 2 can cause rare culling near the edge of your screen issues, please use 3 or more";

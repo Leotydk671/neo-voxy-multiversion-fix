@@ -1,5 +1,6 @@
 package me.cortex.voxy.client.core.rendering.util;
 
+import me.cortex.voxy.client.core.gl.DsaClearPath;
 import me.cortex.voxy.client.core.gl.GlFramebuffer;
 import me.cortex.voxy.client.core.gl.GlTexture;
 import org.lwjgl.system.MemoryStack;
@@ -42,12 +43,23 @@ public class DepthFramebuffer {
     }
 
     public void clear(float depth) {
+        //Intel's Windows OpenGL driver can drop a named framebuffer clear without raising an error and
+        //leave the attachment untouched. This buffer is the chunk-bound mask the translucent LOD shader
+        //reads unconditionally, so a clear that never lands is what removes distant water.
+        if (DsaClearPath.useFallback()) {
+            DsaClearPath.clearDepth(this.framebuffer.id, depth);
+            return;
+        }
         try (var stack = MemoryStack.stackPush()) {
             nglClearNamedFramebufferfv(this.framebuffer.id, GL_DEPTH, 0, stack.nfloat(depth));
         }
     }
 
     public void clearStencil(int to) {
+        if (DsaClearPath.useFallback()) {
+            DsaClearPath.clearStencil(this.framebuffer.id, to);
+            return;
+        }
         try (var stack = MemoryStack.stackPush()) {
             nglClearNamedFramebufferiv(this.framebuffer.id, GL_STENCIL, 0, stack.nint(to));
         }
