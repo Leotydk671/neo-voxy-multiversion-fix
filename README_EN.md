@@ -21,6 +21,29 @@ Neo Voxy is maintained by **JohnSnow**. It continues [NHblock714/voxy](https://g
 | Minecraft 1.20.1 · Forge | Client only | Embeddium / Oculus | 17 | `neo-voxy-0.3.5-alpha.2-mc1.20.1-forge-client.jar` |
 | Minecraft 26.1.2 · NeoForge | Client only | Sodium 0.9.2 / Iris 1.11.4+ | 25 | `neo-voxy-0.3.4-mc26.1.2-neoforge-client.jar` |
 
+## Fixes and additions in this fork (water-fix branch)
+
+This branch is based on the latest upstream source and contains the following changes:
+
+### Fixed defects
+
+- **Distant water rendering errors (moire / missing surface)**: the port routed the water top faces to a per-voxel "shaped quad" path, and `encodeFluidStep` wrote the step height into the quad's fluid-shape flag bits (42..45), so merged water surfaces fell apart into 1x1 patches; the water now uses the plain merged-face path (matching the 0.2.15 and NH 0.4.0 ports).
+- **Fluid height mask bug**: `modelFluidHeight`'s 5-bit mask also read the adjacent isFluid flag (bit 12), feeding the height out as h+16 and raising the surface by ~1.8 blocks; the mask is now 4 bits.
+- **Chunk-bound mask saturated by the camera box**: the mask raster did not skip the section box containing the camera; its near-plane-straddling projection covers the whole screen and writes far depths into the mask, making the LOD water overlap and flicker against the vanilla water inside the render distance; that box is now skipped.
+- **Coplanar boundary z-fighting**: the LOD and vanilla geometry are coplanar at the handoff and the depth test flips per pixel; a 1-ulp nearward vertex depth bias lets the LOD win those tests consistently.
+- **Intel/Windows driver compatibility**: the Intel Windows driver silently drops DSA named-clears (the mask, the translucent distance buckets and the stencil initialisation depend on them); a one-off detection with a `glClearBuffer*` fallback path (`DsaClearPath`) was added.
+- **Lightmap sampling convention**: the recently restored "texel centre" sampling follows the MC 26.x convention, which reads half a light level brighter than the vanilla terrain this port targets (1.21.1/1.20.1); the left-edge form is now the default, with a toggle (below).
+
+### New config option
+
+- **Lightmap sampling (lightmapTexelCenter)**: off by default = texel left edges (matches the 1.21.1/1.20.1 vanilla); on = texel centres (the MC 26.x / upstream Voxy convention, slightly brighter overall). The toggle is a runtime uniform - it takes effect immediately with no shader recompilation.
+
+### Mod compatibility
+
+- **Physics Mod (3.0.34, NeoForge 1.21.1)**: verified compatible. Its ocean physics alters the fluid height data, which the original shaped-quad path could not handle; the plain merged-face path in this branch is unaffected and the water renders correctly.
+
+> Building works exactly like upstream: fork and run the `Build Neo Voxy multiversion` Actions workflow, or follow the manual build instructions below.
+
 ## Installation and server compatibility (1.21.1)
 
 Starting with 0.5.0, 1.21.1 ships one JAR instead of separate integrations and client-only editions. Install it on the client to use distant rendering; optionally install the same JAR on the server. Dedicated servers do not need Sodium or Iris. Do not install both old editions together.
