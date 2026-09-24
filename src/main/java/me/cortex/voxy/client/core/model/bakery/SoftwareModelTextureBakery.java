@@ -401,6 +401,8 @@ public class SoftwareModelTextureBakery {
         }
     }
 
+    private static boolean LOGGED_EMPTY_FLUID_BAKE;
+
     private static float getVanillaLikeFluidShade(Direction direction) {
         if (direction == null) {
             return 1.0f;
@@ -515,6 +517,14 @@ public class SoftwareModelTextureBakery {
                 this.translucentVC.reset();
                 this.bakeFluidState(state, i, blockRenderLayer);
                 if (this.opaqueVC.isEmpty() && this.translucentVC.isEmpty()) {
+                    //One-shot diagnostic: the vanilla renderLiquid emitted nothing (a mod may have
+                    //suppressed it), so the fluid's bake is empty and the LOD water will be missing.
+                    if (!LOGGED_EMPTY_FLUID_BAKE) {
+                        LOGGED_EMPTY_FLUID_BAKE = true;
+                        me.cortex.voxy.common.Logger.warn("[WaterDiag] fluid bake EMPTY for " + state
+                                + " (face " + i + ", layer " + blockRenderLayer
+                                + ") - the vanilla liquid renderer emitted no quads");
+                    }
                     continue;
                 }
                 isAnyShaded |= this.opaqueVC.anyShaded | this.translucentVC.anyShaded;

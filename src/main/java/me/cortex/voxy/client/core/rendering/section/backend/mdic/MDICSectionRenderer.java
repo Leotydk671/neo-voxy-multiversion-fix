@@ -206,7 +206,7 @@ public class MDICSectionRenderer extends AbstractSectionRenderer<MDICViewport, B
                 && LodPipelineHooks.distantTrackMeshesReady;
         MemoryUtil.memPutFloat(ptr, distantTracksReady ? 1.0f : 0.0f);
         ptr += 4;
-        MemoryUtil.memPutFloat(ptr, 0.0f);
+        MemoryUtil.memPutFloat(ptr, VoxyConfig.CONFIG.lightmapTexelCenter ? 1.0f : 0.0f);
         ptr += 4;
         MemoryUtil.memPutInt(ptr, viewport.prevBuildFrameId & 0x7fffffff);
         ptr += 4;

@@ -211,5 +211,6 @@
   "voxy.config.general.renderQuality.3": "标准",
   "voxy.config.general.renderQuality.4": "较高",
   "voxy.config.general.renderQuality.5": "高",
-  "voxy.config.general.renderQuality.6": "极高"
+  "voxy.config.general.renderQuality.6": "极高",
+  "voxy.config.general.lightmapTexelCenter": "光照图采样方式：纹素中心（新版本 MC 26.x 的约定，整体偏亮半档；仅在与光影包匹配时开启）"
 }

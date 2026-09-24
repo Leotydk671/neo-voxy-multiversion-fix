@@ -10,7 +10,7 @@ layout(binding = 0, std140) uniform SceneUniform {
     float framedBlocksMaxDistanceSquared;
     vec2 worldCurveData;
     float distantTracksEnabled;
-    float _scenePadding;
+    float lightmapTexelCenter;
     uint prevBuildFrameId;
     uint visibilityGraceId;
 };

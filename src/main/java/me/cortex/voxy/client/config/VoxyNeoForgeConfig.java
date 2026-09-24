@@ -65,6 +65,11 @@ public class VoxyNeoForgeConfig {
             .comment("Width of the stable dithered terrain handoff, in blocks")
             .defineInRange("lodBoundaryFadeLength", 16, 8, 64);
 
+    private static final ModConfigSpec.BooleanValue LIGHTMAP_TEXEL_CENTER = BUILDER
+            .comment("Sample the lightmap at the exact texel centres (MC 26.x / upstream Voxy convention) instead of the texel left edges (MC 1.20.x / 1.21.1 convention).",
+                    "The centres read half a light level brighter than the vanilla terrain this port targets; enable only to match shader packs that assume the centre convention.")
+            .define("lightmapTexelCenter", false);
+
     private static final ModConfigSpec.IntValue LOD_BOUNDARY_INSET = BUILDER
             .comment("Safety distance between the handoff outer edge and vanilla render distance, in blocks")
             .defineInRange("lodBoundaryInset", 8, 8, 32);
@@ -226,6 +231,7 @@ public class VoxyNeoForgeConfig {
         VoxyConfig.CONFIG.lodBoundaryBuffer = LOD_BOUNDARY_BUFFER.get();
         VoxyConfig.CONFIG.enableLodBoundaryFade = ENABLE_LOD_BOUNDARY_FADE.get();
         VoxyConfig.CONFIG.lodBoundaryFadeLength = LOD_BOUNDARY_FADE_LENGTH.get();
+        VoxyConfig.CONFIG.lightmapTexelCenter = LIGHTMAP_TEXEL_CENTER.get();
         VoxyConfig.CONFIG.lodBoundaryInset = LOD_BOUNDARY_INSET.get();
         VoxyConfig.CONFIG.enableExtendedRequestDistance = ENABLE_EXTENDED_REQUEST_DISTANCE.get();
         VoxyConfig.CONFIG.requestDistance = REQUEST_DISTANCE.get();
@@ -275,6 +281,7 @@ public class VoxyNeoForgeConfig {
         DONT_USE_SODIUM_BUILDER_THREADS.set(VoxyConfig.CONFIG.dontUseSodiumBuilderThreads);
         LOD_BOUNDARY_BUFFER.set(VoxyConfig.CONFIG.lodBoundaryBuffer);
         ENABLE_LOD_BOUNDARY_FADE.set(VoxyConfig.CONFIG.enableLodBoundaryFade);
+        LIGHTMAP_TEXEL_CENTER.set(VoxyConfig.CONFIG.lightmapTexelCenter);
         LOD_BOUNDARY_FADE_LENGTH.set(VoxyConfig.CONFIG.lodBoundaryFadeLength);
         LOD_BOUNDARY_INSET.set(VoxyConfig.CONFIG.lodBoundaryInset);
         ENABLE_EXTENDED_REQUEST_DISTANCE.set(VoxyConfig.CONFIG.enableExtendedRequestDistance);

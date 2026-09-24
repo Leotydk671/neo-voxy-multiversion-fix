@@ -100,6 +100,10 @@ public class VoxyConfig {
     public int lodBoundaryBuffer = 1;
     public boolean enableLodBoundaryFade = true;
     public int lodBoundaryFadeLength = 16;
+    //Whether to sample the lightmap at the exact texel centres (the convention MC 26.x and the
+    //upstream Voxy use) or at the texel left edges (the convention MC 1.20.x/1.21.1 use; the default,
+    //as it matches the vanilla terrain this port targets).
+    public boolean lightmapTexelCenter = false;
     public int lodBoundaryInset = 8;
     public int earthCurveRatio = 0;
     public boolean enableExtendedRequestDistance = false;

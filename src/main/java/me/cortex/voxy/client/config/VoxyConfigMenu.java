@@ -378,6 +378,11 @@ public class VoxyConfigMenu implements ConfigEntryPoint {
                                         Component.translatable("voxy.config.general.lodBoundaryFade"),
                                         ()->cfg.enableLodBoundaryFade, v->cfg.enableLodBoundaryFade=v)
                                         .setImpact(OptionImpact.LOW),
+                                new BoolOption(
+                                        "voxy:lightmap_texel_center",
+                                        Component.translatable("voxy.config.general.lightmapTexelCenter"),
+                                        ()->cfg.lightmapTexelCenter, v->cfg.lightmapTexelCenter=v)
+                                        .setImpact(OptionImpact.LOW),
                                 new IntOption(
                                         "voxy:lod_boundary_fade_length",
                                         Component.translatable("voxy.config.general.lodBoundaryFadeLength"),

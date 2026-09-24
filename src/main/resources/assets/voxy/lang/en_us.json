@@ -211,5 +211,6 @@
   "voxy.config.general.renderQuality.3": "Standard",
   "voxy.config.general.renderQuality.4": "Medium-high",
   "voxy.config.general.renderQuality.5": "High",
-  "voxy.config.general.renderQuality.6": "Very high"
+  "voxy.config.general.renderQuality.6": "Very high",
+  "voxy.config.general.lightmapTexelCenter": "Lightmap sampling: texel centre (the MC 26.x convention; reads half a light level brighter - enable only to match shader packs)"
 }
