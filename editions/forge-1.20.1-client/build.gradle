@@ -14,7 +14,19 @@ repositories {
     mavenCentral()
     maven { url = 'https://maven.minecraftforge.net/' }
     maven { url = 'https://maven.blamejared.com/' }
-    maven { url = 'https://maven.createmod.net/' }
+    maven {
+        name = 'Architectury'
+        url = 'https://maven.architectury.dev/'
+        content { includeGroup 'dev.architectury' }
+    }
+    maven {
+        name = 'Create'
+        url = 'https://maven.createmod.net/'
+        content {
+            includeGroup 'net.createmod.ponder'
+            includeGroup 'dev.engine-room.flywheel'
+        }
+    }
     maven {
         name = 'Modrinth'
         url = 'https://api.modrinth.com/maven'
@@ -24,6 +36,15 @@ repositories {
 
 configurations {
     lwjglRuntimeBundle
+}
+
+configurations.configureEach {
+    resolutionStrategy.eachDependency {
+        if (requested.group == 'dev.architectury' && requested.name == 'mixin-patched') {
+            useVersion '0.8.5.12'
+            because 'Architectury Loom requests a dynamic version that requires remote metadata'
+        }
+    }
 }
 
 loom {
